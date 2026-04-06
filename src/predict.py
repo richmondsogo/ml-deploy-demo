@@ -2,10 +2,10 @@ import joblib
 import pandas as pd
 
 # Load model
-model = joblib.load("models/linear_regression.pkl")
+model = joblib.load("models/MLPRegressor.pkl")
 
 # Example input data
-sample = [[0.1, 0.2, 0.3, 0.4]]
+sample = [[2.5, 200.1, 4, 0.5]]
 
 # Make prediction
 prediction = model.predict(sample)

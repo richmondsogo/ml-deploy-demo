@@ -7,6 +7,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression, Ridge
 from sklearn.ensemble import RandomForestRegressor, GradientBoostingRegressor
 from sklearn.metrics import r2_score, root_mean_squared_error
+from sklearn.neural_network import MLPRegressor
 
 
 DATA_URL = "https://raw.githubusercontent.com/dataprofessor/data/refs/heads/master/delaney_solubility_with_descriptors.csv"
@@ -19,10 +20,11 @@ def load_data():
 
 def get_models():
     return {
-        "linear_regression": LinearRegression(),
-        "ridge": Ridge(),
-        "random_forest": RandomForestRegressor(random_state=42),
-        "gradient_boosting": GradientBoostingRegressor(random_state=42),
+        # "linear_regression": LinearRegression(),
+        # "ridge": Ridge(),
+        # "random_forest": RandomForestRegressor(random_state=42),
+        # "gradient_boosting": GradientBoostingRegressor(random_state=42),
+        "MLPRegressor": MLPRegressor(random_state=42, max_iter=500),
     }
 
 def ensure_directories():

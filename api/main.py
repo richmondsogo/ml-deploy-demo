@@ -1,11 +1,24 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
+from pydantic import BaseModel
+from typing import List
 import joblib
 import numpy as np
+import uvicorn
 
 app = FastAPI()
 
-# Load model once when API starts
-model = joblib.load("./models/ridge.pkl")
+
+# 1. Define the data structure
+class PredictionRequest(BaseModel):
+    features: List[float]
+
+
+# Load model once
+try:
+    model = joblib.load("../models/MLPRegressor.pkl")
+except Exception as e:
+    print(f"Error loading model: {e}")
+    model = None
 
 
 @app.get("/")
@@ -14,10 +27,20 @@ def home():
 
 
 @app.post("/predict")
-def predict(data: dict):
-    # Expect input like: {"features": [1, 2, 3, 4]}
-    features = np.array(data["features"]).reshape(1, -1)
+def predict(request: PredictionRequest):
+    if model is None:
+        raise HTTPException(status_code=503, detail="Model not loaded")
 
-    prediction = model.predict(features).tolist()
+    try:
+        # Pydantic ensures 'request.features' is a list of floats
+        features = np.array(request.features).reshape(1, -1)
 
-    return {"prediction": prediction}
+        prediction = model.predict(features).tolist()
+
+        return {"prediction": prediction}
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+
+if __name__ == "__main__":
+    uvicorn.run("main:app", host="127.0.0.1", port=8000, reload=True)
